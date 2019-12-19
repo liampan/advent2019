@@ -15,13 +15,22 @@ object DayOne {
 
   def getAllRocketFuel(): Int = {
     val file = InputReader.getInput("day_1_input")
-    file.foldLeft(0)((acc, cur) => acc + countFuelFor(cur.toInt))
+    file.foldLeft(0)((acc, cur) => acc + addOnAdditionalFuel(countFuelFor(cur.toInt)))
   }
 
-  def additionalFuel(dryMassRequiredFuel: Int) : Int = {
-    countFuelFor(dryMassRequiredFuel) match {
-      case 0 => dryMassRequiredFuel
+  //So, for each module mass, calculate its fuel and add it to the total.
+  // Then, treat the fuel amount you just calculated as the input mass
+  // and repeat the process, continuing until a fuel requirement
+  // is zero or negative.
+
+  def addOnAdditionalFuel(dryMassRequiredFuel: Int) : Int = {
+    def additionalFuelHelper(dryMassRequiredFuel: Int, acc: Int): Int = {
+      countFuelFor(dryMassRequiredFuel) match {
+        case 0 => dryMassRequiredFuel + acc
+        case extraFuel => additionalFuelHelper(extraFuel, dryMassRequiredFuel + acc)
+      }
     }
+    additionalFuelHelper(dryMassRequiredFuel, 0)
   }
 
 }
